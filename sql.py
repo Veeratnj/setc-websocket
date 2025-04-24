@@ -7,6 +7,7 @@ from psql import insert_data
 import threading
 import time
 import json
+from datetime import datetime, timedelta
 
 # --- Database Setup ---
 def create_table():
@@ -87,8 +88,50 @@ token_list = [
 # Create SmartWebSocketV2 instance
 sws = SmartWebSocketV2(auth_token=AUTH_TOKEN, api_key=api_key, feed_token=FEED_TOKEN, client_code=data['data']['clientcode'])
 
+close_price_map = {}
+
+def get_candle_key(timestamp):
+    dt = datetime.fromtimestamp(timestamp / 1000)
+    return dt.replace(second=0, microsecond=0, minute=(dt.minute // 5) * 5)
+
+
+def get_candle_key(timestamp):
+    dt = datetime.fromtimestamp(timestamp / 1000)
+    # Get the next 5-minute mark, then subtract 1 second
+    next_five_min = dt.replace(second=0, microsecond=0, minute=(dt.minute // 5) * 5) + timedelta(minutes=5)
+    return next_five_min - timedelta(seconds=1)
+
+
+def get_adjusted_close_time():
+    now = datetime.now()
+    # Round to the nearest 5th minute, then subtract 1 second
+    minute = (now.minute // 5) * 5 + 4  # Get the 4th minute of the 5-min window
+    adjusted_time = now.replace(minute=minute, second=59, microsecond=0)
+    if adjusted_time < now:
+        return adjusted_time
+    else:
+        return adjusted_time - timedelta(minutes=5)
+
+
+
+def cleanup_old_closes():
+    now = datetime.now()
+    expired_keys = []
+
+    for key, record in close_price_map.items():
+        # If this 5-min bucket is older than 5 minutes, save and clean it
+        if now - record['time'] > timedelta(minutes=5):
+            stock_name = get_stock_name_from_token(record['token'])  # Your mapping function
+            insert_data(str(record['token']), stock_name, record['ltp'])  # Your existing DB function
+            print(f"[Saved] {stock_name} | ₹{record['ltp']} at {record['time']}")
+            expired_keys.append(key)
+
+    # Remove expired records from memory (only store the latest)
+    for key in expired_keys:
+        del close_price_map[key]
+
 # --- WebSocket Callbacks ---
-def on_data(wsapp, message):
+def on_data_v1(wsapp, message):
     print("Ticks received: {}".format(message))
     
     try:
@@ -187,6 +230,47 @@ def get_stock_name_from_token(token):
     
 
     return stock_map.get(str(token), "Unknown Stock")
+
+
+def on_data(wsapp, message):
+    try:
+        # Check if message is a string (it needs to be parsed), otherwise assume it's already a dict
+        if isinstance(message, str):
+            data = json.loads(message)
+        else:
+            data = message  # If it's already a dict, use it directly
+
+        # Handle if message is a list of ticks or a single tick
+        ticks = data if isinstance(data, list) else [data]
+
+        for tick in ticks:
+            token = tick.get('token')
+            ltp = tick.get('last_traded_price')
+            timestamp = tick.get('exchange_timestamp')
+
+            if token and ltp and timestamp:
+                # Generate 5-min interval key
+                candle_time = get_candle_key(timestamp)
+                key = f"{token}_{candle_time}"
+
+                # Convert to actual price
+                price = ltp / 100  # Assuming LTP is in paise (like cents)
+
+                # Update the latest LTP for this token in the current 5-min interval
+                close_price_map[key] = {
+                    'time': candle_time,
+                    'token': token,
+                    'ltp': price
+                }
+
+                # Clean up old (expired) entries and store the most recent close price
+                cleanup_old_closes()
+
+            else:
+                print(f"Missing fields in tick: {tick}")
+    except Exception as e:
+        print(f"Error in on_data: {e}")
+
 
 def on_open(wsapp):
     print("WebSocket connection opened")

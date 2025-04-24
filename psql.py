@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, DateTime
+from sqlalchemy import create_engine, Column, Integer, String, DateTime,Float
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
@@ -21,7 +21,7 @@ class StockDetails(Base):
     id = Column(Integer, primary_key=True, index=True)
     stock_name = Column(String, nullable=False)
     token = Column(String, unique=True, nullable=False)
-    ltp = Column(Integer, nullable=False)
+    ltp = Column(Float, nullable=False)
     last_update = Column(DateTime, nullable=False)
 
 # --- Create Table if Not Exists ---
