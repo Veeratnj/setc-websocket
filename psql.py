@@ -35,14 +35,14 @@ def insert_data(token, stock_name, ltp):
         stock = session.query(StockDetails).filter_by(token=token).first()
         now = datetime.now()
         if stock:
-            stock.ltp = ltp
+            stock.ltp = float(ltp)/100
             stock.stock_name = stock_name
             stock.last_update = now
         else:
             stock = StockDetails(
                 token=token,
                 stock_name=stock_name,
-                ltp=ltp,
+                ltp=float(ltp)/100,
                 last_update=now
             )
             session.add(stock)

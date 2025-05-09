@@ -73,11 +73,35 @@ nifty_50_tokens = [
     "5005", "5055", "5105", "5155", "5205", "5255", "5305", "5355", "5405", "5455"
 ]
 
-stock_map={"99926000":"NIFTY50",
-    "99926009":"BANKNIFTY",
-    "99926037":"FINNIFTY",
-    "3045":"SBIN-EQ"
+# stock_map={"99926000":"NIFTY50",
+#     "99926009":"BANKNIFTY",
+#     "99926037":"FINNIFTY",
+#     "3045":"SBIN-EQ"
+# }   
+stock_map = {
+    "99926037": "FINNIFTY",
+    "99926000": "NIFTY50",
+    "99926009": "BANKNIFTY",
+    # "3045": "SBIN-EQ",
+    # "10": "ABAN-EQ",
+    # "25": "ADANIENT-EQ",
+    # "438": "BHEL-EQ",
+    # "1660": "ITC",
+    # "10099": "GODREJCP",
+    # "3351": "SUNPHARMA",
+    # "1922": "KOTAKBANK",
+    # "17963": "NESTLEIND",
+    # "3506": "TITAN",
+    # "11809": "IIFL",
+    # "1406": "HINDPETRO",
+    # "3426": "TATAPOWER",
+    # "19234": "LAURUSLABS",
+    # "10440": "LUPIN-EQ",
+    # "3150": "SIEMENS-EQ",
+    # "1333": "HDFCBANK-EQ",
+    # "5900": "AXISBANK-EQ"
 }
+
 
 # --- WebSocket Setup ---
 token_list = [
@@ -90,7 +114,7 @@ sws = SmartWebSocketV2(auth_token=AUTH_TOKEN, api_key=api_key, feed_token=FEED_T
 
 close_price_map = {}
 
-def get_candle_key(timestamp):
+def get_candle_key1(timestamp):
     dt = datetime.fromtimestamp(timestamp / 1000)
     return dt.replace(second=0, microsecond=0, minute=(dt.minute // 5) * 5)
 
@@ -131,8 +155,8 @@ def cleanup_old_closes():
         del close_price_map[key]
 
 # --- WebSocket Callbacks ---
-def on_data_v1(wsapp, message):
-    print("Ticks received: {}".format(message))
+def on_data(wsapp, message):
+    # print("Ticks received: {}".format(message))
     
     try:
         # Directly parse the message as we no longer expect a 'data' field
@@ -156,84 +180,46 @@ def on_data_v1(wsapp, message):
 def get_stock_name_from_token(token):
     # This function can map token to stock name. For now, it's a simple placeholder.
     # You'll need to replace it with a more accurate mapping.
+    
+   
+    
+#     stock_map={"99926000":"NIFTY50",
+#     "99926009":"BANKNIFTY",
+#     "99926037":"FINNIFTY",
+#     "3045":"SBIN-EQ",
+# }   
     stock_map = {
-        "2885": "RELIANCE",
-        "3045": "TCS",
-        # Add more tokens and corresponding stock names here
-    }
-    stock_map = {
-    "2885": "ADANIENT",
-    "3045": "ADANIPORTS",
-    "2765": "ASIANPAINT",
-    "2855": "AXISBANK",
-    "2775": "BAJAJ-AUTO",
-    "2675": "BAJFINANCE",
-    "2535": "BAJAJFINSV",
-    "2785": "BPCL",
-    "2735": "BHARTIARTL",
-    "2925": "BRITANNIA",
-    "3065": "CIPLA",
-    "3115": "COALINDIA",
-    "3155": "DIVISLAB",
-    "3135": "DRREDDY",
-    "3205": "EICHERMOT",
-    "3255": "GRASIM",
-    "3305": "HCLTECH",
-    "3355": "HDFC",
-    "3405": "HDFCBANK",
-    "3455": "HEROMOTOCO",
-    "3505": "HINDALCO",
-    "3555": "HINDUNILVR",
-    "3605": "ICICIBANK",
-    "3655": "ITC",
-    "3705": "INDUSINDBK",
-    "3755": "INFY",
-    "3805": "JSWSTEEL",
-    "3855": "KOTAKBANK",
-    "3905": "LT",
-    "3955": "M&M",
-    "4005": "MARUTI",
-    "4055": "NTPC",
-    "4105": "NESTLEIND",
-    "4155": "ONGC",
-    "4205": "POWERGRID",
-    "4255": "RELIANCE",
-    "4305": "SBILIFE",
-    "4355": "SBIN",
-    "4405": "SUNPHARMA",
-    "4455": "TCS",
-    "4505": "TATACONSUM",
-    "4555": "TATAMOTORS",
-    "4605": "TATASTEEL",
-    "4655": "TECHM",
-    "4705": "TITAN",
-    "4755": "UPL",
-    "4805": "ULTRACEMCO",
-    "4855": "WIPRO",
-    "4905": "HDFCLIFE",
-    "4955": "APOLLOHOSP",
-    "5005": "BAJAJHLDNG",
-    "5055": "SBICARD",
-    "5105": "ICICIPRULI",
-    "5155": "SHREECEM",
-    "5205": "PEL",
-    "5255": "DLF",
-    "5305": "NAUKRI",
-    "5355": "VOLTAS",
-    "5405": "LTI",
-    "5455": "LTIM",}
-    stock_map={"99926000":"NIFTY50",
-    "99926009":"BANKNIFTY",
-    "99926037":"FINNIFTY",
-    "3045":"SBIN-EQ",
+    "99926037": "FINNIFTY",
+    "99926000": "NIFTY50",
+    "99926009": "BANKNIFTY",
+    # "3045": "SBIN-EQ",
+    # "10": "ABAN-EQ",
+    # "25": "ADANIENT-EQ",
+    # "438": "BHEL-EQ",
+    # "1660": "ITC",
+    # "10099": "GODREJCP",
+    # "3351": "SUNPHARMA",
+    # "1922": "KOTAKBANK",
+    # "17963": "NESTLEIND",
+    # "3506": "TITAN",
+    # "11809": "IIFL",
+    # "1406": "HINDPETRO",
+    # "3426": "TATAPOWER",
+    # "19234": "LAURUSLABS",
+    # "10440": "LUPIN-EQ",
+    # "3150": "SIEMENS-EQ",
+    # "1333": "HDFCBANK-EQ",
+    # "5900": "AXISBANK-EQ"
 }
+
     
 
     return stock_map.get(str(token), "Unknown Stock")
 
 
-def on_data(wsapp, message):
+def on_data_v2(wsapp, message):
     try:
+        # print("Ticks received: {}".format(message))
         # Check if message is a string (it needs to be parsed), otherwise assume it's already a dict
         if isinstance(message, str):
             data = json.loads(message)
@@ -248,7 +234,8 @@ def on_data(wsapp, message):
             ltp = tick.get('last_traded_price')
             timestamp = tick.get('exchange_timestamp')
 
-            if token and ltp and timestamp:
+            # if token and ltp and timestamp:
+            if True:
                 # Generate 5-min interval key
                 candle_time = get_candle_key(timestamp)
                 key = f"{token}_{candle_time}"
