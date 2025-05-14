@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, DateTime,Float
+from sqlalchemy import create_engine, Column, Integer, String, DateTime,Float ,text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
@@ -25,8 +25,8 @@ class StockDetails(Base):
     last_update = Column(DateTime, nullable=False)
 
 # --- Create Table if Not Exists ---
-def create_table():
-    Base.metadata.create_all(bind=engine)
+# def create_table():
+#     Base.metadata.create_all(bind=engine)
 
 # --- Insert or Update Stock Data ---
 def insert_data(token, stock_name, ltp):
@@ -52,3 +52,35 @@ def insert_data(token, stock_name, ltp):
         session.rollback()
     finally:
         session.close()
+
+
+# ...existing code...
+
+# --- Execute Custom Query ---
+def stock_token(params=None):
+    """
+    Execute a custom SQL SELECT query.
+
+    :param params: Optional dictionary of parameters for the query.
+    :return: List of query result rows.
+    """
+    session = SessionLocal()
+    query = '''
+    SELECT sd.token, sd.stock_name FROM stock_details sd;
+    '''
+    try:
+        result = session.execute(text(query), params or {})
+
+        
+        return  {row.token: row.stock_name for row in result.fetchall()}
+    except SQLAlchemyError as e:
+        print(f"Custom Query Error: {e}")
+        return None
+    finally:
+        session.close()
+
+# if __name__ == "__main__":
+#     res = execute_custom_query()
+#     print(res)
+    # for row in res:
+    #     print(dict(row._mapping)) 

@@ -3,27 +3,30 @@ from datetime import datetime
 from SmartApi import SmartConnect
 import pyotp
 from smartWebSocketV2 import SmartWebSocketV2
-from psql import insert_data
+from psql import insert_data,stock_token
 import threading
 import time
 import json
 from datetime import datetime, timedelta
 
 # --- Database Setup ---
-def create_table():
-    conn = sqlite3.connect('stock_data.db')
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS stock_prices (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            uuid TEXT,
-            stock_name TEXT,
-            ltp REAL,
-            last_update TEXT
-        )
-    ''')
-    conn.commit()
-    conn.close()
+# def create_table():
+#     conn = sqlite3.connect('stock_data.db')
+#     cursor = conn.cursor()
+#     cursor.execute('''
+#         CREATE TABLE IF NOT EXISTS stock_prices (
+#             id INTEGER PRIMARY KEY AUTOINCREMENT,
+#             uuid TEXT,
+#             stock_name TEXT,
+#             ltp REAL,
+#             last_update TEXT
+#         )
+#     ''')
+#     conn.commit()
+#     conn.close()
+
+stock_map=stock_token()
+
 
 # def insert_data(uuid, stock_name, ltp):
 #     conn = sqlite3.connect('stock_data.db')
@@ -78,29 +81,29 @@ nifty_50_tokens = [
 #     "99926037":"FINNIFTY",
 #     "3045":"SBIN-EQ"
 # }   
-stock_map = {
-    "99926037": "FINNIFTY",
-    "99926000": "NIFTY50",
-    "99926009": "BANKNIFTY",
-    # "3045": "SBIN-EQ",
-    # "10": "ABAN-EQ",
-    # "25": "ADANIENT-EQ",
-    # "438": "BHEL-EQ",
-    # "1660": "ITC",
-    # "10099": "GODREJCP",
-    # "3351": "SUNPHARMA",
-    # "1922": "KOTAKBANK",
-    # "17963": "NESTLEIND",
-    # "3506": "TITAN",
-    # "11809": "IIFL",
-    # "1406": "HINDPETRO",
-    # "3426": "TATAPOWER",
-    # "19234": "LAURUSLABS",
-    # "10440": "LUPIN-EQ",
-    # "3150": "SIEMENS-EQ",
-    # "1333": "HDFCBANK-EQ",
-    # "5900": "AXISBANK-EQ"
-}
+# stock_map = {
+#     "99926037": "FINNIFTY",
+#     "99926000": "NIFTY50",
+#     "99926009": "BANKNIFTY",
+#     # "3045": "SBIN-EQ",
+#     # "10": "ABAN-EQ",
+#     # "25": "ADANIENT-EQ",
+#     # "438": "BHEL-EQ",
+#     # "1660": "ITC",
+#     # "10099": "GODREJCP",
+#     # "3351": "SUNPHARMA",
+#     # "1922": "KOTAKBANK",
+#     # "17963": "NESTLEIND",
+#     # "3506": "TITAN",
+#     # "11809": "IIFL",
+#     # "1406": "HINDPETRO",
+#     # "3426": "TATAPOWER",
+#     # "19234": "LAURUSLABS",
+#     # "10440": "LUPIN-EQ",
+#     # "3150": "SIEMENS-EQ",
+#     # "1333": "HDFCBANK-EQ",
+#     # "5900": "AXISBANK-EQ"
+# }
 
 
 # --- WebSocket Setup ---
@@ -188,29 +191,29 @@ def get_stock_name_from_token(token):
 #     "99926037":"FINNIFTY",
 #     "3045":"SBIN-EQ",
 # }   
-    stock_map = {
-    "99926037": "FINNIFTY",
-    "99926000": "NIFTY50",
-    "99926009": "BANKNIFTY",
-    # "3045": "SBIN-EQ",
-    # "10": "ABAN-EQ",
-    # "25": "ADANIENT-EQ",
-    # "438": "BHEL-EQ",
-    # "1660": "ITC",
-    # "10099": "GODREJCP",
-    # "3351": "SUNPHARMA",
-    # "1922": "KOTAKBANK",
-    # "17963": "NESTLEIND",
-    # "3506": "TITAN",
-    # "11809": "IIFL",
-    # "1406": "HINDPETRO",
-    # "3426": "TATAPOWER",
-    # "19234": "LAURUSLABS",
-    # "10440": "LUPIN-EQ",
-    # "3150": "SIEMENS-EQ",
-    # "1333": "HDFCBANK-EQ",
-    # "5900": "AXISBANK-EQ"
-}
+#     stock_map = {
+#     "99926037": "FINNIFTY",
+#     "99926000": "NIFTY50",
+#     "99926009": "BANKNIFTY",
+#     # "3045": "SBIN-EQ",
+#     # "10": "ABAN-EQ",
+#     # "25": "ADANIENT-EQ",
+#     # "438": "BHEL-EQ",
+#     # "1660": "ITC",
+#     # "10099": "GODREJCP",
+#     # "3351": "SUNPHARMA",
+#     # "1922": "KOTAKBANK",
+#     # "17963": "NESTLEIND",
+#     # "3506": "TITAN",
+#     # "11809": "IIFL",
+#     # "1406": "HINDPETRO",
+#     # "3426": "TATAPOWER",
+#     # "19234": "LAURUSLABS",
+#     # "10440": "LUPIN-EQ",
+#     # "3150": "SIEMENS-EQ",
+#     # "1333": "HDFCBANK-EQ",
+#     # "5900": "AXISBANK-EQ"
+# }
 
     
 
@@ -277,13 +280,8 @@ sws.on_close = on_close
 
 # --- Main Execution ---
 if __name__ == "__main__":
-    create_table()  # Ensure the table exists
+    # create_table()  # Ensure the table exists
     sws.connect()    # Start WebSocket connection
-
-    # Optionally, you can use threading to keep the WebSocket connection open
-    # threading.Thread(target=sws.connect).start()
-
-    # Keep the script running
     try:
         while True:
             time.sleep(1)  # Keeps the main thread alive to keep receiving data
