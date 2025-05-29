@@ -26,6 +26,7 @@ from datetime import datetime, timedelta
 #     conn.close()
 
 stock_map=stock_token()
+print(list(stock_map.keys()))
 
 
 # def insert_data(uuid, stock_name, ltp):
@@ -159,7 +160,7 @@ def cleanup_old_closes():
 
 # --- WebSocket Callbacks ---
 def on_data(wsapp, message):
-    # print("Ticks received: {}".format(message))
+    print("Ticks received: {}".format(message))
     
     try:
         # Directly parse the message as we no longer expect a 'data' field
@@ -263,7 +264,7 @@ def on_data_v2(wsapp, message):
 
 
 def on_open(wsapp):
-    print("WebSocket connection opened")
+    print("WebSocket connection opened",dir(wsapp))
     sws.subscribe('abc123', 1, token_list)  # Subscribe to token list
 
 def on_error(wsapp, error):

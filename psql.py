@@ -66,13 +66,23 @@ def stock_token(params=None):
     """
     session = SessionLocal()
     query = '''
-    SELECT sd.token, sd.stock_name FROM stock_details sd;
+    SELECT sd.token, sd.stock_name FROM stock_details sd
+    join stocks s on sd.token = s.token
+    where s.is_hotlist = true 
+    ;
     '''
     try:
         result = session.execute(text(query), params or {})
+        data={row.token: row.stock_name for row in result.fetchall()}
+        # "99926000":"NIFTY50",
+        #     "99926009":"BANKNIFTY",
+        #     "99926037":"FINNIFTY",
+        data['99926000'] = "NIFTY50"
+        data['99926009'] = "BANKNIFTY"
+        data['99926037'] = "FINNIFTY"
 
-        
-        return  {row.token: row.stock_name for row in result.fetchall()}
+        # print({row.token: row.stock_name for row in result.fetchall()})
+        return  data
     except SQLAlchemyError as e:
         print(f"Custom Query Error: {e}")
         return None
