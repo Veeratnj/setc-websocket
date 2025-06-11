@@ -1,1 +1,5 @@
 .venv
+history/
+*.db
+logs/
+__pycache__/

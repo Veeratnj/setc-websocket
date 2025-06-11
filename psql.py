@@ -24,6 +24,20 @@ class StockDetails(Base):
     ltp = Column(Float, nullable=False)
     last_update = Column(DateTime, nullable=False)
 
+class OhlcData(Base):
+    __tablename__ = 'ohlc_data'
+    
+    id = Column(Integer, primary_key=True, index=True)
+    token = Column(String(50), nullable=False)
+    start_time = Column(DateTime, nullable=False)
+    open = Column(Float, nullable=False)
+    high = Column(Float, nullable=False)
+    low = Column(Float, nullable=False)
+    close = Column(Float, nullable=False)
+    interval = Column(String(10), nullable=True)
+    created_at = Column(DateTime, server_default=text('CURRENT_TIMESTAMP'), nullable=True)
+
+
 # --- Create Table if Not Exists ---
 # def create_table():
 #     Base.metadata.create_all(bind=engine)
@@ -88,6 +102,29 @@ def stock_token(params=None):
         return None
     finally:
         session.close()
+
+
+
+def insert_ohlc_data(token, start_time, open_, high, low, close, interval=None):
+    session = SessionLocal()
+    try:
+        ohlc_entry = OhlcData(
+            token=token,
+            start_time=start_time,
+            open=float(open_),
+            high=float(high),
+            low=float(low),
+            close=float(close),
+            interval=interval
+        )
+        session.add(ohlc_entry)
+        session.commit()
+    except SQLAlchemyError as e:
+        print(f"Insert OHLC Error: {e}")
+        session.rollback()
+    finally:
+        session.close()
+
 
 # if __name__ == "__main__":
 #     res = execute_custom_query()
