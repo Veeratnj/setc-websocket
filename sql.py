@@ -69,6 +69,7 @@ def on_data(wsapp, message):
         ts_epoch = message.get('exchange_timestamp')
 
         if token and ltp:
+            ltp = float(ltp)/100
             stock_name = get_stock_name_from_token(token)  # You can implement a mapping function
             print(stock_name)
             uuid = str(token)  # Replace this with actual UUID logic if necessary
