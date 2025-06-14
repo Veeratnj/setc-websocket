@@ -135,20 +135,20 @@ sws.on_close = on_close
 
 # --- Main Execution ---
 if __name__ == "__main__":
-    'for testing'
-    with open(r'11-06-2025\99926037.txt', 'r') as file:
-        data=file.read()
-    data = data.split('\n')
-    dict_list = [ast.literal_eval(item) for item in data]
-    for i,item in enumerate(dict_list):
-        on_data(message=item,wsapp=None)
+    # 'for testing'
+    # with open(r'11-06-2025\99926037.txt', 'r') as file:
+    #     data=file.read()
+    # data = data.split('\n')
+    # dict_list = [ast.literal_eval(item) for item in data]
+    # for i,item in enumerate(dict_list):
+    #     on_data(message=item,wsapp=None)
     
 
     'for production'
-    # sws.connect()    # Start WebSocket connection
-    # try:
-    #     while True:
-    #         time.sleep(1)  # Keeps the main thread alive to keep receiving data
-    # except KeyboardInterrupt:
-    #     print("Process interrupted, closing WebSocket connection.")
-    #     sws.close_connection()
+    sws.connect()    # Start WebSocket connection
+    try:
+        while True:
+            time.sleep(1)  # Keeps the main thread alive to keep receiving data
+    except KeyboardInterrupt:
+        print("Process interrupted, closing WebSocket connection.")
+        sws.close_connection()
