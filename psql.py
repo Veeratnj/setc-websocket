@@ -84,7 +84,6 @@ def stock_token(params=None):
     SELECT sd.token, sd.stock_name FROM stock_details sd
     join stocks s on sd.token = s.token
     where s.is_hotlist = true 
-    ;
     '''
     try:
         result = session.execute(text(query), params or {})
@@ -92,9 +91,9 @@ def stock_token(params=None):
         # "99926000":"NIFTY50",
         #     "99926009":"BANKNIFTY",
         #     "99926037":"FINNIFTY",
-        data['99926000'] = "NIFTY50"
-        data['99926009'] = "BANKNIFTY"
-        data['99926037'] = "FINNIFTY"
+        # data['99926000'] = "NIFTY50"
+        # data['99926009'] = "BANKNIFTY"
+        # data['99926037'] = "FINNIFTY"
 
         # print({row.token: row.stock_name for row in result.fetchall()})
         return  data
