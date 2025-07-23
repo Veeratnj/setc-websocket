@@ -216,7 +216,7 @@ sws.on_close = on_close
 
 
 def wait_until_915():
-    now = datetime.datetime.now()
+    now = datetime.now()
     target = now.replace(hour=9, minute=15, second=0, microsecond=0)
 
     if now < target:
@@ -225,7 +225,7 @@ def wait_until_915():
         time.sleep(wait_seconds)
     else:
         print("It's 9:15 AM or later, starting immediately.")
-        
+
 
 if __name__ == "__main__":
     wait_until_915()
